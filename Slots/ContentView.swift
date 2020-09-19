@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    private func sendMessage(_ msg: AppDelegate.Message) {
+        (NSApp.delegate as? AppDelegate)?.handle(msg)
+    }
+
     var body: some View {
-        Text("Hello, World!")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack {
+            Text("Hello, World!")
+            Button(action: { sendMessage(.SlotBuilderActivate)}, label: { Text("Edit slots") })
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
