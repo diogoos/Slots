@@ -7,35 +7,64 @@
 
 import SwiftUI
 
-struct RoundedBorder: View {
-    struct colors {
-        static var lightPrimary: Color = Color.primary.opacity(0.8)
-    }
+extension RoundedRectangle {
+    /// Custom RoundedRectangle-based border
+    struct Border: View {
+        struct colors {
+            static let lightPrimary: Color = Color.primary.opacity(0.8)
+        }
 
-    var dash = [CGFloat]()
-    var width: Int = 2
-    var cornerRadius: Int = 8
-    var color: Color = RoundedBorder.colors.lightPrimary
+        var dash = [CGFloat]()
+        var width: Int = 2
+        var cornerRadius: Int = 8
+
+        var body: some View {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: dash))
+                .foregroundColor(Self.colors.lightPrimary)
+        }
+    }
+}
+
+
+struct PageNavigationBar<Content: View>: View {
+    @Binding var pageIndex: Int
+
+    let minIndex: Int = 0
+    let maxIndex: Int
+
+    var label: (Int) -> (Content)
+
+    private var previousPageExists: Bool { pageIndex > minIndex }
+    private var nextPageExists: Bool { pageIndex < maxIndex }
+
+    func previousPage() { if previousPageExists { pageIndex -= 1 } }
+    func nextPage()     { if nextPageExists { pageIndex += 1 } }
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 8)
-            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: dash))
-            .foregroundColor(RoundedBorder.colors.lightPrimary)
+        HStack {
+            Button(action: previousPage, label: { Text("<") })
+                .disabled(!previousPageExists)
+
+            label(pageIndex)
+
+            Button(action: nextPage, label: { Text(">") })
+                .disabled(!nextPageExists)
+        }
+        .frame(maxWidth: .infinity, minHeight: 30)
+        .background(Color(NSColor.textBackgroundColor))
     }
 }
 
 struct SlotBuilder: View {
+    // Recieve the SlotTable from the AppDelegate
     @ObservedObject var slotTable: SlotTableWrapper
+
+    // Manage the current slot
     @State private var currentIndex: Int = 0
     private var currentSlot: [Slot] { slotTable.table[currentIndex] }
 
-    private var canRemove: Bool { self.currentIndex > 0 }
-    private var canAdd: Bool { self.currentIndex < Calendar.current.weekdaySymbols.count-1 }
-
-//    init() {
-//        _slots = .init(initialValue: SlotTable())
-//    }
-
+    // Close the popover, discarding changes
     private func closePopover() {
         sendMessage(AppDelegate.Message.SlotBuilderCancel)
         DispatchQueue.main.async {
@@ -43,82 +72,84 @@ struct SlotBuilder: View {
         }
     }
 
+    // Close the popover and save changes
     private func saveSlots() {
         slotTable.table.save(to: UserDefaults.standard)
         sendMessage(AppDelegate.Message.SlotBuilderSave)
     }
 
+
+    // Create a new slot
+    private func createSlot() {
+        withAnimation { slotTable.table[currentIndex].append(Slot()) }
+    }
+
+    // Button to create a new slot
     private var addButton: some View {
-        Button(action: {
-            withAnimation {
-                slotTable.table[currentIndex].append(Slot())
-            }
-        }) {
+        Button(action: createSlot) {
             VStack(spacing: 0) {
                 Image("add")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .foregroundColor(RoundedBorder.colors.lightPrimary)
+                    .foregroundColor(RoundedRectangle.Border.colors.lightPrimary)
                     .frame(width: 30)
                 Text("Add a slot")
             }
             .frame(maxWidth: .infinity, minHeight: 60)
-            .overlay(RoundedBorder(dash: [15]))
+            .overlay(RoundedRectangle.Border(dash: [15]))
         }
         .buttonStyle(PlainButtonStyle())
         .padding(.top)
     }
 
-    private var daySwitcher: some View {
+    // Content view heading
+    private var heading: some View {
         HStack {
-            Button(action: {
-                if canRemove {
-                    self.currentIndex += -1
-                }
-            }, label: { Text("<") })
-            .disabled(!canRemove)
+            Text("Sequence builder")
+                .font(.headline)
 
-            Text("\(Calendar.current.weekdaySymbols[currentIndex])")
+            Spacer()
 
-            Button(action: {
-                if canAdd {
-                    self.currentIndex += 1
-                }
-            }, label: { Text(">") })
-            .disabled(!canAdd)
+            Button(action: self.closePopover, label: { Text("Cancel") })
+            Button(action: self.saveSlots, label: { Text("Save") })
         }
-        .frame(maxWidth: .infinity, minHeight: 30)
-        .background(Color(NSColor.textBackgroundColor))
     }
 
+    // Main view
     var body: some View {
         VStack {
             VStack {
-                HStack {
-                    Text("Sequence builder")
-                        .font(.headline)
-
-                    Spacer()
-
-                    Button(action: self.closePopover, label: { Text("Cancel") })
-                    Button(action: self.saveSlots, label: { Text("Save") })
-                }
+                heading
 
                 ForEach(currentSlot) { slot in
                     SlotView(slot: slot, parent: self)
                     .tag(slot.id)
                 }
 
-                self.addButton
+                addButton
             }
             .padding()
 
             Spacer()
 
-            self.daySwitcher
+            PageNavigationBar(pageIndex: $currentIndex,
+                              maxIndex: Calendar.current.weekdaySymbols.count - 1,
+                              label: { Text(Calendar.current.weekdaySymbols[$0]) })
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    // Sort table helper
+    func sortTable() {
+        slotTable.table[currentIndex].sort { (lhs: Slot, rhs: Slot) in
+            return Date(from: lhs.time) < Date(from: rhs.time)
+        }
+    }
+
+    // Remove slot with a specific id
+    func removeSlot(id: UUID) {
+        guard let slotIndex = currentSlot.firstIndex(where: { $0.id == id }) else { return }
+        slotTable.table[currentIndex].remove(at: slotIndex)
     }
 }
 
@@ -135,18 +166,32 @@ struct SlotView: View {
                     .textFieldStyle(SquareBorderTextFieldStyle())
 
                 slot.time.pickerView()
+
+                Button(action: {
+                    parent.removeSlot(id: slot.id)
+                }, label: {
+                    Image("xmark.circle.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 15)
+                        .foregroundColor(Color.gray)
+                })
+                .buttonStyle(PlainButtonStyle())
             }
+            .onHover(perform: { if !$0 { parent.sortTable() } })
         }
         .frame(minHeight: 60)
         .padding(.horizontal)
-        .overlay(RoundedBorder())
+        .overlay(RoundedRectangle.Border())
     }
 }
 
+#if DEBUG
 struct SlotBuilder_Previews: PreviewProvider {
     static var previews: some View {
         SlotBuilder(slotTable: SlotTableWrapper(table: SlotTable()))
             .frame(width: 400, height: 500)
     }
 }
-
+#endif
