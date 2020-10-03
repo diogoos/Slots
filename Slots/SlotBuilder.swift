@@ -25,34 +25,33 @@ struct RoundedBorder: View {
 }
 
 struct SlotBuilder: View {
-    @State private var slots: SlotTable
-
+    @ObservedObject var slotTable: SlotTableWrapper
     @State private var currentIndex: Int = 0
-    private var currentSlot: [Slot] { slots[currentIndex] }
+    private var currentSlot: [Slot] { slotTable.table[currentIndex] }
 
     private var canRemove: Bool { self.currentIndex > 0 }
     private var canAdd: Bool { self.currentIndex < Calendar.current.weekdaySymbols.count-1 }
 
-    init() {
-        _slots = .init(initialValue: SlotTable(defaults: UserDefaults.standard))
-    }
+//    init() {
+//        _slots = .init(initialValue: SlotTable())
+//    }
 
     private func closePopover() {
         sendMessage(AppDelegate.Message.SlotBuilderCancel)
         DispatchQueue.main.async {
-            slots = SlotTable(defaults: UserDefaults.standard)
+            slotTable.table = SlotTable(from: UserDefaults.standard)
         }
     }
 
     private func saveSlots() {
-        slots.save(to: UserDefaults.standard)
+        slotTable.table.save(to: UserDefaults.standard)
         sendMessage(AppDelegate.Message.SlotBuilderSave)
     }
 
     private var addButton: some View {
         Button(action: {
             withAnimation {
-                self.slots[currentIndex].append(Slot())
+                slotTable.table[currentIndex].append(Slot())
             }
         }) {
             VStack(spacing: 0) {
@@ -146,7 +145,7 @@ struct SlotView: View {
 
 struct SlotBuilder_Previews: PreviewProvider {
     static var previews: some View {
-        SlotBuilder()
+        SlotBuilder(slotTable: SlotTableWrapper(table: SlotTable()))
             .frame(width: 400, height: 500)
     }
 }

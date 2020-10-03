@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var eventMonitor: EventMonitor?
     private var currentPopover: NSPopover?
     private var statusItem: NSStatusItem!
+    private var slotTable: SlotTableWrapper!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create menu bar item
@@ -28,6 +29,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let strongSelf = self else { return }
             strongSelf.hideCurrentPopover()
         }
+
+        // Load the defaults
+        slotTable = SlotTableWrapper(table: SlotTable(from: UserDefaults.standard))
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -39,13 +43,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Views
-    private lazy var contentView = ContentView()
+    private lazy var contentView = ContentView(slotTable: self.slotTable)
+    private lazy var builderView = SlotBuilder(slotTable: self.slotTable)
     private func menuView() -> NSMenu {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "Edit slots", action: #selector(editSlots), keyEquivalent: ""))
+        #if DEBUG
+        menu.addItem(NSMenuItem(title: "Debug timetable", action: #selector(debug), keyEquivalent: ""))
+        #endif
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q"))
         return menu
     }
+
+    #if DEBUG
+    @objc func debug() {
+        for (index, daySlots) in slotTable.table.enumerated() {
+            print("Day \(index)")
+            for slot in daySlots {
+                print("  - \(slot.name) at \(slot.time)")
+            }
+        }
+    }
+    #endif
 
     // MARK: - Helpers
     private func showCurrentPopover() {
@@ -110,7 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             let popover = NSPopover()
             popover.contentSize = NSSize(width: 400, height: 500)
-            popover.contentViewController = NSHostingController(rootView: SlotBuilder())
+            popover.contentViewController = NSHostingController(rootView: self.builderView)
 
             self.currentPopover = popover
             self.showCurrentPopover()
@@ -127,7 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func handle(_ message: Message) {
         switch message {
         case .SlotBuilderActivate:
-            currentPopover!.contentViewController = NSHostingController(rootView: SlotBuilder())
+            currentPopover!.contentViewController = NSHostingController(rootView: builderView)
             currentPopover!.contentSize = NSSize(width: 400, height: 500)
 
         case .SlotBuilderCancel:

@@ -38,14 +38,24 @@ class Slot: Identifiable, ObservableObject, Codable {
     }
 }
 
+
+class SlotTableWrapper: ObservableObject {
+    @Published var table: SlotTable
+
+    init(table: SlotTable) {
+        self.table = table
+    }
+}
+
 typealias SlotTable = [[Slot]]
 extension SlotTable {
     static let empty: SlotTable = Calendar.current.weekdaySymbols.map({ _ in [] })
 
-    init(defaults: UserDefaults) {
+    init(from defaults: UserDefaults) {
         if let slotData = defaults.data(forKey: "SlotTable"),
            let decoded = try? JSONDecoder().decode(SlotTable.self, from: slotData) {
             self = decoded
+            return
         }
         self = SlotTable.empty
     }

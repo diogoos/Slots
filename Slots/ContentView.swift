@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     private let currentDayIndex = Calendar.current.dateComponents([.weekday], from: Date()).weekday! - 1
-    private let slotTable = SlotTable(defaults: UserDefaults.standard)
+    @ObservedObject var slotTable: SlotTableWrapper
 
     var body: some View {
         VStack {
@@ -19,7 +19,7 @@ struct ContentView: View {
                 .padding(.bottom)
 
             // Show schedule for the day
-            ForEach(slotTable[currentDayIndex]) { slot in
+            ForEach(slotTable.table[currentDayIndex]) { slot in
                 HStack {
                     Text(slot.name)
                         .padding(.leading)
@@ -47,6 +47,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(slotTable: SlotTableWrapper(table: SlotTable(from: UserDefaults.standard)))
     }
 }
