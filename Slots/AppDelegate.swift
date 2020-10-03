@@ -81,7 +81,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         currentPopover.show(relativeTo: button.bounds,
                             of: button,
                             preferredEdge: NSRectEdge.minY)
+
         currentPopover.contentViewController?.view.window?.becomeKey()
+        NSApp.keyWindow?.makeFirstResponder(nil)
     }
 
     private func hideCurrentPopover() {

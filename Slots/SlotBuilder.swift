@@ -137,6 +137,7 @@ struct SlotBuilder: View {
                               maxIndex: Calendar.current.weekdaySymbols.count - 1,
                               label: { Text(Calendar.current.weekdaySymbols[$0]) })
         }
+        .onAppear(perform: { NSApp.keyWindow?.makeFirstResponder(nil) })
     }
 
     // Sort table helper
@@ -157,6 +158,28 @@ struct SlotView: View {
     @ObservedObject var slot: Slot
     var parent: SlotBuilder
 
+    private func withTimeBugFix<Content: View>(content: () -> (Content)) -> some View {
+        content().focusable(true, onFocusChange: { _ in
+            slot.time = slot.time
+            parent.sortTable()
+        })
+    }
+
+    private var removeButton: some View {
+        Button(action: {
+            parent.removeSlot(id: slot.id)
+        }, label: {
+            Image("xmark.circle.fill")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 15)
+                .foregroundColor(Color.gray)
+        })
+        .buttonStyle(PlainButtonStyle())
+        .focusable()
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -165,27 +188,24 @@ struct SlotView: View {
                 TextField("Slot name", text: $slot.name)
                     .textFieldStyle(SquareBorderTextFieldStyle())
 
-                slot.time.pickerView()
+                withTimeBugFix {
+                    Group {
+                        slot.time.pickerView()
+                        removeButton
+                    }
+                }
 
-                Button(action: {
-                    parent.removeSlot(id: slot.id)
-                }, label: {
-                    Image("xmark.circle.fill")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 15)
-                        .foregroundColor(Color.gray)
-                })
-                .buttonStyle(PlainButtonStyle())
             }
             .onHover(perform: { if !$0 { parent.sortTable() } })
         }
         .frame(minHeight: 60)
         .padding(.horizontal)
         .overlay(RoundedRectangle.Border())
+        .onAppear(perform: { NSApp.keyWindow?.makeFirstResponder(nil) })
     }
 }
+
+
 
 #if DEBUG
 struct SlotBuilder_Previews: PreviewProvider {
