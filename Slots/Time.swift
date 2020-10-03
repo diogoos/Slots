@@ -53,6 +53,11 @@ class Time: CustomStringConvertible, Codable, ObservableObject {
         return relativeFormatter.localizedString(for: currentDate, relativeTo: relativeDate)
     }
 
+    func conditionalDescription(relativeTo relativeDate: Date) -> String {
+        let hourDiff = abs(relativeDate.component(.hour) - self.hour)
+        return hourDiff > 1 ? description : description(relativeTo: relativeDate)
+    }
+
     // MARK: Encoding & Decoding
     // We want to encode the hour minute second joined together in a string
     // to avoid using extra space

@@ -26,7 +26,7 @@ struct ContentView: View {
 
                     Spacer()
 
-                    Text(slot.time.description)
+                    Text(slot.time.conditionalDescription(relativeTo: Date()))
                         .padding(.trailing)
                 }
                 .padding(.vertical, 2)
