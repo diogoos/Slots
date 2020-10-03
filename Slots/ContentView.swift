@@ -26,9 +26,7 @@ struct ContentView: View {
 
                     Spacer()
 
-                    Text(slot.date
-                            .overriding(components: [\.day, \.month, \.year], toMatch: Date())
-                            .conditionalRelativeTimeString)
+                    Text(slot.time.description)
                         .padding(.trailing)
                 }
                 .padding(.vertical, 2)

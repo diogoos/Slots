@@ -7,101 +7,51 @@
 
 import Foundation
 
-class Slot: Identifiable, ObservableObject {
+class Slot: Identifiable, ObservableObject, Codable {
+    // MARK: Initializers
     let id = UUID()
-    @Published var name: String = ""
-    @Published var date: Date = Date()
+    @Published var name: String
+    @Published var time: Time
 
-    struct Static: Codable {
-        private(set) var name: String
-        private(set) var date: Date
-
-        var dynamic: Slot {
-            Slot(name: name, date: date)
-        }
-
-        init(name: String, date: Date) {
-            self.name = name
-            self.date = date.overriding(component: \.day, to: 1)
-                            .overriding(component: \.month, to: 1)
-                            .overriding(component: \.year, to: 2001)
-        }
-    }
-
-    init(name: String, date: Date) {
+    init(name: String = "", time: Time = Time()) {
         self.name = name
-        self.date = date
+        self.time = time
     }
 
-    init() {
-        self.name = ""
-        self.date = Date().overriding(component: \.day, to: 1)
-                          .overriding(component: \.month, to: 1)
-                          .overriding(component: \.year, to: 2001)
+    // MARK: Encoding & Decoding
+    enum CodingKeys: CodingKey {
+        case name
+        case time
     }
 
-    var staticSlot: Slot.Static { Slot.Static(name: name, date: date) }
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        time = try container.decode(Time.self, forKey: .time)
+    }
+
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(time, forKey: .time)
+    }
 }
 
-struct SlotTable {
-    // [[slot, slot, slot], [slot, slot], ....
-    //       monday           tuesday      etc
-    var slotsTable: [[Slot]]
-
-    subscript(x: Int) -> [Slot] {
-        get {
-            return slotsTable[x]
-        }
-        set {
-            slotsTable[x] = newValue
-        }
-    }
-
-    struct Static: Codable {
-        private(set) var staticSlotTable: [[Slot.Static]]
-
-        var dynamic: SlotTable {
-            let slots = staticSlotTable.map { row in row.map { $0.dynamic } }
-            return SlotTable(slotsTable: slots)
-        }
-    }
-
-    var staticTable: SlotTable.Static {
-        let staticSlots = slotsTable.map { slotRow in slotRow.map { $0.staticSlot } }
-        return SlotTable.Static(staticSlotTable: staticSlots)
-    }
-
-    init(slotsTable: [[Slot]]) {
-        self.slotsTable = slotsTable
-    }
+typealias SlotTable = [[Slot]]
+extension SlotTable {
+    static let empty: SlotTable = Calendar.current.weekdaySymbols.map({ _ in [] })
 
     init(defaults: UserDefaults) {
-        let emptyTable: [[Slot]] = Calendar.current.weekdaySymbols.map({ _ in [] })
-
-        guard let slotData = defaults.data(forKey: "SlotTable") else {
-            self.slotsTable = emptyTable
-            return
+        if let slotData = defaults.data(forKey: "SlotTable"),
+           let decoded = try? JSONDecoder().decode(SlotTable.self, from: slotData) {
+            self = decoded
         }
-        do {
-            let staticSlotTable = try JSONDecoder().decode(SlotTable.Static.self, from: slotData)
-            self = staticSlotTable.dynamic
-        } catch {
-            self.slotsTable = emptyTable
-        }
+        self = SlotTable.empty
     }
 
     func save(to defaults: UserDefaults) {
-        guard let data = try? JSONEncoder().encode(staticTable) else { return }
+        guard let data = try? JSONEncoder().encode(self) else { return }
         defaults.set(data, forKey: "SlotTable")
-    }
-}
-
-extension Array where Element == Slot {
-    mutating func sortByDate() {
-        self.sort(by: { $0.date < $1.date })
-    }
-
-    func sortedByDate() -> Self {
-        return self.sorted(by: { $0.date < $1.date })
     }
 }

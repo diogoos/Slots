@@ -37,12 +37,6 @@ struct SlotBuilder: View {
         _slots = .init(initialValue: SlotTable(defaults: UserDefaults.standard))
     }
 
-    func sort() {
-        withAnimation {
-            slots[currentIndex].sortByDate()
-        }
-    }
-
     private func closePopover() {
         sendMessage(AppDelegate.Message.SlotBuilderCancel)
         DispatchQueue.main.async {
@@ -141,11 +135,7 @@ struct SlotView: View {
                 TextField("Slot name", text: $slot.name)
                     .textFieldStyle(SquareBorderTextFieldStyle())
 
-                DatePicker("Date", selection: $slot.date, displayedComponents: .hourAndMinute)
-                    .onHover(perform: { a in
-                        if !a { parent.sort() }
-                    })
-                    .datePickerStyle(FieldDatePickerStyle())
+                slot.time.pickerView()
             }
         }
         .frame(minHeight: 60)
