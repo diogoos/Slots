@@ -34,18 +34,13 @@ struct SlotBuilder: View {
     private var canAdd: Bool { self.currentIndex < Calendar.current.weekdaySymbols.count-1 }
 
     init() {
-//        let loaded = SlotTable(from: StaticSlotTable.load())
-        _slots = .init(initialValue: SlotTable.init(defaults: UserDefaults.standard))
+        _slots = .init(initialValue: SlotTable(defaults: UserDefaults.standard))
     }
 
     func sort() {
         withAnimation {
             slots[currentIndex].sortByDate()
         }
-    }
-
-    private func sendMessage(_ msg: AppDelegate.Message) {
-        (NSApp.delegate as? AppDelegate)?.handle(msg)
     }
 
     private func closePopover() {

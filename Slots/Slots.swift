@@ -22,7 +22,9 @@ class Slot: Identifiable, ObservableObject {
 
         init(name: String, date: Date) {
             self.name = name
-            self.date = date.time
+            self.date = date.overriding(component: \.day, to: 1)
+                            .overriding(component: \.month, to: 1)
+                            .overriding(component: \.year, to: 2001)
         }
     }
 
@@ -33,7 +35,9 @@ class Slot: Identifiable, ObservableObject {
 
     init() {
         self.name = ""
-        self.date = Date().time
+        self.date = Date().overriding(component: \.day, to: 1)
+                          .overriding(component: \.month, to: 1)
+                          .overriding(component: \.year, to: 2001)
     }
 
     var staticSlot: Slot.Static { Slot.Static(name: name, date: date) }
@@ -99,16 +103,5 @@ extension Array where Element == Slot {
 
     func sortedByDate() -> Self {
         return self.sorted(by: { $0.date < $1.date })
-    }
-}
-
-extension Date {
-    var time: Date {
-        let calendar = Calendar.current
-        var component = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
-        component.year = 2001
-        component.month = 1
-        component.day = 1
-        return Calendar.current.date(from: component) ?? self
     }
 }

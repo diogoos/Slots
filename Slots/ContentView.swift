@@ -8,13 +8,38 @@
 import SwiftUI
 
 struct ContentView: View {
-    private func sendMessage(_ msg: AppDelegate.Message) {
-        (NSApp.delegate as? AppDelegate)?.handle(msg)
-    }
+    private let currentDayIndex = Calendar.current.dateComponents([.weekday], from: Date()).weekday! - 1
+    private let slotTable = SlotTable(defaults: UserDefaults.standard)
 
     var body: some View {
         VStack {
-            Text("Hello, World!")
+            // Current week day
+            Text(Calendar.current.weekdaySymbols[currentDayIndex])
+                .font(.headline)
+                .padding(.bottom)
+
+            // Show schedule for the day
+            ForEach(slotTable[currentDayIndex]) { slot in
+                HStack {
+                    Text(slot.name)
+                        .padding(.leading)
+
+                    Spacer()
+
+                    Text(slot.date
+                            .overriding(components: [\.day, \.month, \.year], toMatch: Date())
+                            .conditionalRelativeTimeString)
+                        .padding(.trailing)
+                }
+                .padding(.vertical, 2)
+                .background(Color(NSColor.textBackgroundColor))
+                .cornerRadius(3.0)
+                .focusable()
+                .padding(.vertical, 5)
+            }
+            .padding(.horizontal)
+
+            // Edit slots button
             Button(action: { sendMessage(.SlotBuilderActivate)}, label: { Text("Edit slots") })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

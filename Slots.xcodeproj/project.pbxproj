@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		FD1EDD8825160BB500D614C1 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1EDD8725160BB500D614C1 /* EventMonitor.swift */; };
+		FD2C501F2527F98400E7D789 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2C501E2527F98400E7D789 /* Date.swift */; };
+		FD2C50222527FA4200E7D789 /* View+AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2C50212527FA4200E7D789 /* View+AppDelegate.swift */; };
 		FD41B2D025166F37003B432C /* Slots.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD41B2CF25166F37003B432C /* Slots.swift */; };
 		FD65A39625155D6400F2BB5F /* SlotBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD65A39525155D6400F2BB5F /* SlotBuilder.swift */; };
 		FDF76ECF2514185900A40E77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76ECE2514185900A40E77 /* AppDelegate.swift */; };
@@ -19,6 +21,8 @@
 
 /* Begin PBXFileReference section */
 		FD1EDD8725160BB500D614C1 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
+		FD2C501E2527F98400E7D789 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		FD2C50212527FA4200E7D789 /* View+AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AppDelegate.swift"; sourceTree = "<group>"; };
 		FD41B2CF25166F37003B432C /* Slots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slots.swift; sourceTree = "<group>"; };
 		FD65A39525155D6400F2BB5F /* SlotBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotBuilder.swift; sourceTree = "<group>"; };
 		FDF76ECB2514185900A40E77 /* Slots.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slots.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +75,8 @@
 				FDF76EDB2514185A00A40E77 /* Slots.entitlements */,
 				FDF76ED42514185A00A40E77 /* Preview Content */,
 				FD1EDD8725160BB500D614C1 /* EventMonitor.swift */,
+				FD2C501E2527F98400E7D789 /* Date.swift */,
+				FD2C50212527FA4200E7D789 /* View+AppDelegate.swift */,
 			);
 			path = Slots;
 			sourceTree = "<group>";
@@ -153,7 +159,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD2C50222527FA4200E7D789 /* View+AppDelegate.swift in Sources */,
 				FD41B2D025166F37003B432C /* Slots.swift in Sources */,
+				FD2C501F2527F98400E7D789 /* Date.swift in Sources */,
 				FDF76ED12514185900A40E77 /* ContentView.swift in Sources */,
 				FD65A39625155D6400F2BB5F /* SlotBuilder.swift in Sources */,
 				FDF76ECF2514185900A40E77 /* AppDelegate.swift in Sources */,
