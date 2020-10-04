@@ -47,10 +47,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        // hide popover
         hideCurrentPopover()
-        eventMonitor?.stop()
-        statusItem = nil
         currentPopover = nil
+
+        // stop timer
+        statusTimer.invalidate()
+
+        // remove status item
+        statusItem = nil
+
+        // stop monitoring
+        eventMonitor?.stop()
         
     }
 
@@ -84,11 +92,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return menu
     }
 
-    @objc func setEverySecond() {
-        statusTimer.invalidate()
-        updateInterval = .everySecond
-        setupTimer()
-    }
+    @objc func setEverySecond() { statusTimer.invalidate(); updateInterval = .everySecond; setupTimer() }
     @objc func setEvery30Seconds() { statusTimer.invalidate(); updateInterval = .every30Seconds; setupTimer() }
     @objc func setEveryMinute()    { statusTimer.invalidate(); updateInterval = .everyMinute; setupTimer() }
 
@@ -281,7 +285,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         case .SlotBuilderSave:
             currentPopover!.contentViewController = NSHostingController(rootView: contentView)
-            currentPopover!.contentSize = NSSize(width: 400, height: 400)
+            currentPopover!.contentSize = NSSize(width: 300, height: 400)
         }
     }
 }
