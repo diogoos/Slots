@@ -17,11 +17,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusTimer: Timer!
     private var slotTable: SlotTableWrapper!
 
-    private var updateInterval: TimerUpdateInterval = .everySecond
-    private enum TimerUpdateInterval {
-        case everyMinute
-        case every30Seconds
-        case everySecond
+    private var updateInterval: TimerUpdateInterval? = nil
+    private enum TimerUpdateInterval: Int {
+        case everyMinute = 60
+        case every30Seconds = 30
+        case everySecond = 1
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -59,12 +59,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var builderView = SlotBuilder(slotTable: self.slotTable)
     private func menuView() -> NSMenu {
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Edit slots", action: #selector(editSlots), keyEquivalent: ""))
+        menu.addItem(withTitle: "Edit slots", action: #selector(editSlots), keyEquivalent: "")
         #if DEBUG
-        menu.addItem(NSMenuItem(title: "Debug timetable", action: #selector(debug), keyEquivalent: ""))
+        menu.addItem(withTitle: "Debug timetable", action: #selector(debug), keyEquivalent: "")
         #endif
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Updates every", action: nil, keyEquivalent: ""))
+        menu.addItem(withTitle: "Updates every", action: nil, keyEquivalent: "")
         let everySec = NSMenuItem(title: "1 second", action: #selector(setEverySecond), keyEquivalent: "")
         let every30Sec = NSMenuItem(title: "30 seconds", action: #selector(setEvery30Seconds), keyEquivalent: "")
         let everyMin = NSMenuItem(title: "1 minute", action: #selector(setEveryMinute), keyEquivalent: "")
@@ -73,17 +73,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case .everySecond: everySec.state = .on
         case .everyMinute: everyMin.state = .on
         case .every30Seconds: every30Sec.state = .on
+        case .none: if UserDefaults.standard.integer(forKey: "refreshRate") == 0 { everySec.state = .on }
         }
         menu.addItem(everySec)
         menu.addItem(every30Sec)
         menu.addItem(everyMin)
 
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(withTitle: "Quit", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q")
         return menu
     }
 
-    @objc func setEverySecond()    { statusTimer.invalidate(); updateInterval = .everySecond; setupTimer() }
+    @objc func setEverySecond() {
+        statusTimer.invalidate()
+        updateInterval = .everySecond
+        setupTimer()
+    }
     @objc func setEvery30Seconds() { statusTimer.invalidate(); updateInterval = .every30Seconds; setupTimer() }
     @objc func setEveryMinute()    { statusTimer.invalidate(); updateInterval = .everyMinute; setupTimer() }
 
@@ -134,12 +139,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
 
         // get interval and when to next fire
-        let updateIntervalSec: TimeInterval!
+        var refreshRate: TimeInterval!
+        let savedRefreshRate = UserDefaults.standard.integer(forKey: "refreshRate")
+        if let updateInterval = updateInterval {
+            refreshRate = Double(updateInterval.rawValue)
+        } else if savedRefreshRate > 0 {
+            refreshRate = Double(savedRefreshRate)
+            updateInterval = TimerUpdateInterval(rawValue: savedRefreshRate)
+        }
+        else {
+            refreshRate = 1
+        }
+
         switch updateInterval {
-        case .everySecond:
-            updateIntervalSec = 1
         case .every30Seconds:
-            updateIntervalSec = 30
             if components.second ?? 0 > 30 {
                 components.minute = components.minute! + 1
                 components.second = 0
@@ -147,14 +160,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 components.second = 30
             }
         case .everyMinute:
-            updateIntervalSec = 60
             components.minute = components.minute! + 1
             components.second = 0
+        default: break
         }
+
+        // save current config
+        UserDefaults.standard.set(refreshRate, forKey: "refreshRate")
 
         let fires = Calendar.current.date(from: components)!
 
-        statusTimer = Timer(fire: fires, interval: updateIntervalSec, repeats: true) { [weak self] timer in
+        statusTimer = Timer(fire: fires, interval: refreshRate, repeats: true) { [weak self] timer in
             self?.timerTick()
         }
 
