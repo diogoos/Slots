@@ -19,14 +19,15 @@ class Time: CustomStringConvertible, Codable, ObservableObject {
         self.second = second
     }
 
-    init(from fromDate: Date) {
+    init(from fromDate: Date, ignoringSeconds: Bool = false) {
         hour = fromDate.component(.hour)
         minute = fromDate.component(.minute)
-        second = fromDate.component(.second)
+        if ignoringSeconds { second = 0 }
+        else { second = fromDate.component(.second) }
     }
 
     convenience init() {
-        self.init(from: Date())
+        self.init(from: Date(), ignoringSeconds: true)
     }
 
     func pickerView() -> some View {
