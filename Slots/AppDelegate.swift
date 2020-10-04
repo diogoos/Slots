@@ -193,10 +193,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // if there is a future event 20 minutes or less from now,
         // add the event to the title
-        let upcomingTime = Date(from: currentSlots[afterIndex].time)
-        if upcomingTime.distance(to: now) >= -20*60 {
-            statusItemTitle += " | \(currentSlots[afterIndex].name) "
-            statusItemTitle += currentSlots[afterIndex].time.description(relativeTo: now)
+        if beforeIndex >= 0 && (afterIndex <= currentSlots.count - 1) {
+            let upcomingTime = Date(from: currentSlots[afterIndex].time)
+            if upcomingTime.distance(to: now) >= -20*60 {
+                statusItemTitle += " | \(currentSlots[afterIndex].name) "
+                statusItemTitle += currentSlots[afterIndex].time.description(relativeTo: now)
+            }
         }
 
         // set the title in the menu bar
