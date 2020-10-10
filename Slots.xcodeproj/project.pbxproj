@@ -13,7 +13,6 @@
 		FD41B2D025166F37003B432C /* Slots.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD41B2CF25166F37003B432C /* Slots.swift */; };
 		FD65A39625155D6400F2BB5F /* SlotBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD65A39525155D6400F2BB5F /* SlotBuilder.swift */; };
 		FD9655A025288F6C001BC856 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD96559F25288F6C001BC856 /* Time.swift */; };
-		FDE785DD2531D6BD00FBC2CD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = FDE785DC2531D6BD00FBC2CD /* README.md */; };
 		FDF76ECF2514185900A40E77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76ECE2514185900A40E77 /* AppDelegate.swift */; };
 		FDF76ED12514185900A40E77 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76ED02514185900A40E77 /* ContentView.swift */; };
 		FDF76ED32514185A00A40E77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FDF76ED22514185A00A40E77 /* Assets.xcassets */; };
@@ -28,7 +27,6 @@
 		FD41B2CF25166F37003B432C /* Slots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slots.swift; sourceTree = "<group>"; };
 		FD65A39525155D6400F2BB5F /* SlotBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotBuilder.swift; sourceTree = "<group>"; };
 		FD96559F25288F6C001BC856 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
-		FDE785DC2531D6BD00FBC2CD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		FDF76ECB2514185900A40E77 /* Slots.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slots.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDF76ECE2514185900A40E77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FDF76ED02514185900A40E77 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,7 +80,6 @@
 				FD96559F25288F6C001BC856 /* Time.swift */,
 				FD2C501E2527F98400E7D789 /* Date+Time.swift */,
 				FD2C50212527FA4200E7D789 /* View+AppDelegate.swift */,
-				FDE785DC2531D6BD00FBC2CD /* README.md */,
 			);
 			path = Slots;
 			sourceTree = "<group>";
@@ -154,7 +151,6 @@
 			files = (
 				FDF76ED92514185A00A40E77 /* Main.storyboard in Resources */,
 				FDF76ED62514185A00A40E77 /* Preview Assets.xcassets in Resources */,
-				FDE785DD2531D6BD00FBC2CD /* README.md in Resources */,
 				FDF76ED32514185A00A40E77 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
