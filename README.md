@@ -32,7 +32,7 @@ The slot builder is a friendly interface to build your Slot schedules. However, 
 
 #### JSON Structure
 The Slot JSON structure works like this:
-```JSON
+```
 [
   [], // Sunday is empty
   [ // Monday has two events
