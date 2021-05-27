@@ -27,42 +27,6 @@ The refresh rate options exposed to the user are 1 second, 30 seconds and 1 minu
 - Quit Slots and relaunch the app
 - To revert back to the default refreshRate use `defaults delete com.ds.Slots refreshRate`
 
-### JSON Schedule
-The slot builder is a friendly interface to build your Slot schedules. However, some people may prefer to configure this through another interface. Therefore, Slots *experimentally* supports loading your own JSON Schedule. Please note that invalid formatting or settings may cause the app to crash on launch, or ignore your schedule.
-
-#### JSON Structure
-The Slot JSON structure works like this:
-```
-[
-  [], // Sunday is empty
-  [ // Monday has two events
-    {
-      "name": "Monday Event 1", // The title of the event, as a string
-      "time": "060000" // The time of the event as a string in the following format (HHmmss)
-    },
-    {
-      "name": "Monday Event 2", // The title of the event, as a string
-      "time": "080000" // The time of the event as a string in the following format (HHmmss)
-    },
-  ], 
-  [], // Tuesday is empty
-  [], // Wednesday is empty
-  [], // Thursday is empty
-  [], // Friday is empty
-  []  // Saturday is empty
-]
-```
-#### Applying JSON Schedule
-1. Quit Slots (Option+Click on logo, then press Quit)
-2. Open `Terminal.app`
-3. Minify your JSON code, combining everything into one line
-4. Run the following command `/usr/libexec/PlistBuddy ~/Library/Containers/com.ds.Slots/Data/Library/Preferences/com.ds.Slots.plist`
-5. Escape the JSON into a string. For example, `"[[{\"name\": \"hi\", time: \"000100\"}], [], [], [], [], [], []]"`
-6. Write `set ` then paste in your string
-7. Type in `save`
-8. Type in `exit`
-
-
 ## License
 Copyright © 2020
 
