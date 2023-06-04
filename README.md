@@ -1,37 +1,32 @@
 # Slots
-A simple mac menubar app for managing time 
+Slots is a simple Menubar app designed to help you manage your schedule effortlessly.
 
 <!-- images -->
-<p align="middle"><img src="https://i.ibb.co/8jn0FWQ/Screen-Shot-2020-10-10-at-08-48-50.png" width="32%" alt="Schedule builder"/><img src="https://i.ibb.co/VmvF2jz/Screen-Shot-2020-10-12-at-08-49-50.png" width="32%" alt="Day view"/><br/>Build your schedule, then just tap to view.<br/><br/><img src="https://i.ibb.co/gRhrPCs/Screen-Shot-2020-10-05-at-09-20-46.png" width="60%" alt="Menubar view"/><br/>View from the menu bar</p>
+<p align="middle"><img src="https://raw.githubusercontent.com/diogoos/Slots/main/.github/sequencebuilder.png" width="32%" alt="Schedule builder"/><img src="https://raw.githubusercontent.com/diogoos/Slots/main/.github/dayview.png" width="32%" alt="Day view"/><br/>Build your schedule, then just tap to view.<br/><br/><img src="https://raw.githubusercontent.com/diogoos/Slots/main/.github/menubar.png" width="60%" alt="Menubar view"/><br/>View from the menu bar</p>
 <!-- end images -->
 
 ## About
-Especially during the Distance Learning program, it has become hard to keep track of time. It can be hard to tell when a specific class ends, and when another begins. Although using a calendar is a possible solution, I don't really like this - my whole calendar is cluttered with meetings and classes, when I prefer to use it for project and assignment due dates. So, I built this tiny mac app that will keep track of when classes start and end, and show them in the menubar.
+Keeping track of time, especially during distance learning programs, can be a challenge. It's often difficult to determine when one class ends and another begins. While using a calendar is a possible solution, it often gets cluttered with meetings and classes, making it less effective for tracking project and assignment due dates. To address this, I developed Slots, a lightweight macOS app that conveniently displays your class schedule in the menu bar.
+
+## Features
+* Simple Schedule Management: Easily create and customize your own schedule for each day of the week.
+* Quick Access: Tap on the menu bar item to open Slots and view your schedule.
+* Intuitive Interface: Edit your schedule with ease using the Slot Builder accessible through Option+Clicking the icon.
+* Customizable Update Intervals: Choose between update intervals of 1 second, 30 seconds, or 1 minute for the menu bar title.
+
+## Getting started
+1. Clone the repository
+```bash
+git clone https://github.com/diogoos/Slots.git
+```
+2. Open the project in Xcode
+3. Build and run!
 
 ## Usage
-Tap on the menu bar item to open Slots. Tap on the edit button to create and customize your own schedule, specific for each day of the week. You can also access the Slot Builder by Option+Clicking on the icon, then pressing edit. Once you have made your adjustments, tap save. When you click on the menu bar item again, it will show you the time slots you configured. The menu bar text will also update. It will display:
-- The current time slot
-- The next time slot (if it starts in the next 20 minutes)
+To access Slots, simply tap on the menu bar item. By clicking the edit button, you can create and customize your own schedule for each day of the week. For a quicker access to the Slot Builder, you can use Option+Click on the icon and then press edit.
 
-The menu bar title updates every second by default. If you Option+Click the slots item, you can change between update intervals of 1 second, 30 seconds, and 1 minute. To quit the app, Option+Click the menu bar item, then select Quit.
+Once you have made your adjustments, save your changes. Clicking on the menu bar item again will display your configured time slots. The menu bar text will update to show:
 
-
-## Advanced Usage
-> Note: This section has *not* been extensively tested. All configuration settings should work; however, their usage is not recommended.
-### Custom refresh rate
-The refresh rate options exposed to the user are 1 second, 30 seconds and 1 minute. You can change them by Option+Clicking the menu. However, if you want a custom refresh rate, you are able to set this using the *defaults* terminal command. There are a few limitations in setting a custom update interval: for the options configurable in the menu bar, the app will start updating on the correct time. For example, if you select 1 minute, the app will update once, then start updating every minute at 0 seconds. However, if you select a custom option, such as 2 minutes, then the app will update once, then update every 2 minutes from that time. This means that the updates will not sync up to the current minute. The menu bar might update at 09:20:14 instead of 09:20:00.
-
-- Calculate your desired refresh rate in seconds
-- Open `Terminal.app`
-- Use the following command `defaults write com.ds.Slots refreshRate -int yourRefreshRateInSeconds`
-- Quit Slots and relaunch the app
-- To revert back to the default refreshRate use `defaults delete com.ds.Slots refreshRate`
-
-## License
-Copyright © 2020
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The current time slot
+The next time slot (if it starts within the next 20 minutes)
+By default, the menu bar title updates every second. However, you can customize the update interval by Option+Clicking the slots item. You have the option to choose update intervals of 1 second, 30 seconds, or 1 minute. To quit the app, simply Option+Click the menu bar item and select Quit.
